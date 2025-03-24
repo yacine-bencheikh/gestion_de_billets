@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketThéâtre - Inscription</title>
+    <link rel="stylesheet" href="auth.css">
+    <script src="auth.js"></script>
+    
+</head>
+<body>
+    <!-- Même navbar que la homepage -->
+    <nav class="navbar">
+        <div class="logo">TicketThéâtre</div>
+        <div class="nav-links">
+            <a href="login.html">Connexion</a>
+            <a href="register.html">Inscription</a>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <h2 class="auth-title">Créez votre compte</h2>
+        <form id="registerForm" onsubmit="return validateRegister()">
+            <div class="form-group">
+                <input type="email" id="email" placeholder="Adresse email" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" placeholder="Mot de passe" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+            </div>
+            <button type="submit">S'inscrire</button>
+        </form>
+        <div class="login-link">
+            Déjà un compte ? <a href="login.html">Connectez-vous ici</a>
+        </div>
+    </div>
+
+    <script>
+       
+    </script>
+</body>
+</html>
