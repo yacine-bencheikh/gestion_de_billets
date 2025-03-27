@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Paiement Sécurisé</title>
+    <link rel="stylesheet" href="payment.css">
+    
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">TicketThéâtre</div>
+        <div class="nav-links">
+            <a href="homePage.html">Accueil</a>
+            <a href="login.html">Mon Compte</a>
+        </div>
+    </nav>
+
+    <div class="payment-container">
+        <!-- Formulaire de paiement -->
+        <form class="payment-form" id="paymentForm" onsubmit="return processPayment(event)">
+            <h2>Paiement Sécurisé</h2>
+
+            <div class="card-icons">
+                <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa">
+                <img src="https://img.icons8.com/color/48/000000/mastercard.png" alt="Mastercard">
+                <img src="https://img.icons8.com/color/48/000000/amex.png" alt="American Express">
+            </div>
+
+            <div class="form-group">
+                <label>Numéro de carte</label>
+                <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19" required>
+            </div>
+
+            <div class="form-group">
+                <label>Titulaire de la carte</label>
+                <input type="text" id="cardName" placeholder="Jean Dupont" required>
+            </div>
+
+            <div class="expiry-cvv">
+                <div class="form-group">
+                    <label>Date d'expiration</label>
+                    <div class="date-inputs">
+                        <select id="expMonth" required>
+                            <option value="">Mois</option>
+                            <option value="01">01 - Janvier</option>
+                            <option value="02">02 - Février</option>
+                            <option value="03">03 - Mars</option>
+                            <option value="04">04 - Avril</option>
+                            <option value="05">05 - Mai</option>
+                            <option value="06">06 - Juin</option>
+                            <option value="07">07 - Juillet</option>
+                            <option value="08">08 - Août</option>
+                            <option value="09">09 - Septembre</option>
+                            <option value="10">10 - Octobre</option>
+                            <option value="11">11 - Novembre</option>
+                            <option value="12">12 - Décembre</option>
+                        </select>
+                        <select id="expYear" required>
+                            <option value="">Année</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="text" id="cvv" placeholder="123" maxlength="4" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Adresse de facturation</label>
+                <input type="text" id="address" placeholder="12 Rue du Théâtre" required>
+                <input type="text" id="city" placeholder="Paris" required style="margin-top: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                    <input type="text" id="zipCode" placeholder="75001" style="width: 30%;">
+                    <select id="country" style="width: 70%;">
+                        <option>Tunisia</option>
+                        <option>Algeria</option>
+                        <option>Palestine</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit">Payer maintenant</button>
+            <div class="secured">
+                🔒 Paiement sécurisé avec SSL
+            </div>
+        </form>
+
+        <!-- Récapitulatif de la commande -->
+        <div class="order-summary">
+            <h3>Votre commande</h3>
+            <div class="summary-item">
+                <p><strong>Événement:</strong></p>
+                <p>Concert Symphonique</p>
+                <p>Date: 15 Mars 2024 - 20:00</p>
+            </div>
+
+            <div class="summary-item">
+                <p><strong>Places sélectionnées:</strong></p>
+                <p>A12, A13, A14</p>
+            </div>
+
+            <div class="summary-item">
+                <p><strong>Total:</strong></p>
+                <p style="font-size: 1.5rem; color: #27ae60;">135€</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="payment.js"></script>
+</body>
+
+</html>
