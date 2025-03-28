@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de Réservation</title>
+    <link rel="stylesheet" href="ticket.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='../index.html'">TicketThéâtre</div>
+        <div class="nav-links" style="padding-right: 5rem;">
+            <a href="homePage.html">Accueil</a>
+            <a href="myTickets.html">Mes Billets</a>
+        </div>
+    </nav>
+
+    <div class="confirmation-container">
+        <div class="confirmation-header">
+            <div class="success-icon">✓</div>
+            <h1>Paiement Confirmé !</h1>
+            <p>Votre réservation a été enregistrée avec succès</p>
+        </div>
+
+        <div class="ticket">
+            <div class="ticket-header">
+                <h2>Concert Symphonique</h2>
+                <div class="ticket-number">#RES-2024-0425</div>
+            </div>
+
+            <div class="ticket-body">
+                <div class="ticket-info">
+                    <h3>Détails de l'événement</h3>
+                    <p><strong>Date :</strong> 15 Mars 2024 à 20:00</p>
+                    <p><strong>Durée :</strong> 2 heures</p>
+                    <p><strong>Lieu :</strong> Théâtre Municipal, Paris</p>
+
+                    <h3 style="margin-top: 1.5rem;">Vos Places</h3>
+                    <div>
+                        <span class="seat-badge">A12</span>
+                        <span class="seat-badge">A13</span>
+                        <span class="seat-badge">A14</span>
+                    </div>
+
+                    <h3 style="margin-top: 1.5rem;">Informations de Paiement</h3>
+                    <p><strong>Montant total :</strong> 135,00 €</p>
+                    <p><strong>Méthode :</strong> Carte Mastercard (•••• •••• •••• 4242)</p>
+                    <p><strong>Date de paiement :</strong> 25/04/2024 à 14:30</p>
+                </div>
+
+                <div class="ticket-qrcode">
+                    <div id="qrcode" style="width: 150px; height: 150px; margin-bottom: 1rem;">
+                        <!-- QR Code serait généré dynamiquement -->
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TICKET-123456"
+                            alt="QR Code">
+                    </div>
+                    <p>Présentez ce QR Code à l'entrée</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a href="#" class="btn btn-primary" onclick="window.print()">Imprimer le Billet</a>
+            <a href="../index.html" class="btn btn-secondary">Retour à l'accueil</a>
+        </div>
+    </div>
+
+    <script src="./ticket.js">
+    </script>
+</body>
+
+</html>

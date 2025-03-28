@@ -65,13 +65,11 @@ function createEvent(e) {
         seatsConfig: seats
     };
 
-    // Validation
     if (eventData.availableSeats === 0) {
         alert("Vous devez avoir au moins une place disponible !");
         return false;
     }
 
-    // Ici: Envoyer les données au backend PHP
     console.log('Événement créé:', eventData);
     alert('Événement créé avec succès !');
     window.location.href = 'organizer_dashboard.html';

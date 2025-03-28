@@ -16,8 +16,8 @@ function processPayment(e) {
     }
 
     // Simulation de paiement réussi
-    alert('Paiement réussi ! Redirection...');
-    window.location.href = 'confirmation.html';
+    alert('Paiement réussi ! see your ticket...');
+    window.location.href = '../tickets/tickets.html';
     return false;
 }
 
