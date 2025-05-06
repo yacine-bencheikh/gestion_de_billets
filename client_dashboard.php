@@ -1,8 +1,9 @@
 <?php
 session_start();
 // Check if user is logged in and is a client
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'client') {
-    header('Location: auth/login.php');
+if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'client') {
+    header('Location: auth/login.html');
+
     exit;
 }
 ?>

@@ -39,8 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Redirect based on role
     if ($user['role'] === 'organizer') {
         header('Location: ../organizer_dashboard.php');
-    } else {
-        header('Location: ../++.php');
     }
     exit;
 
