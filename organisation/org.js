@@ -41,7 +41,7 @@ function toggleSeatStatus(seatElement) {
     seatElement.dataset.status = newStatus;
     seatElement.className = `seat ${newStatus}`;
 
-    // Mettre à jour le tableau seats
+
     const seatId = parseInt(seatElement.dataset.id);
     seats[seatId - 1].status = newStatus;
 }
@@ -51,7 +51,7 @@ function updateSeatCount() {
     document.getElementById('availableCount').textContent = available;
 }
 
-function createEvent(e) {
+function submitEventForm(e) {
     e.preventDefault();
 
     const eventData = {
@@ -62,7 +62,7 @@ function createEvent(e) {
         totalSeats: totalSeats,
         availableSeats: seats.filter(s => s.status === 'available').length,
         description: document.getElementById('description').value,
-        seatsConfig: seats
+        seatsConfig: JSON.stringify(seats)
     };
 
     if (eventData.availableSeats === 0) {
@@ -70,9 +70,36 @@ function createEvent(e) {
         return false;
     }
 
-    console.log('Événement créé:', eventData);
-    alert('Événement créé avec succès !');
-    window.location.href = 'organizer_dashboard.html';
+    // Create FormData object for AJAX request
+    const formData = new FormData();
+    for (const key in eventData) {
+        formData.append(key, eventData[key]);
+    }
+
+    // Send data to server
+    fetch('./create_event.php', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                alert('Événement créé avec succès !');
+                window.location.href = 'organizer_dashboard.php';
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            alert('Une erreur est survenue lors de la création de l\'événement: ' + error.message);
+
+        });
 
     return false;
 }

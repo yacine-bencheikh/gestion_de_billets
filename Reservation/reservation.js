@@ -1,42 +1,48 @@
-// Données simulées
-const statuses = ["available", "reserved", "damaged"];
-const eventData = {
-    price: 45,
-    availableSeats: 23,
-    seats: generateSeats()
-};
-
-function generateSeats() {
-    const seats = [];
-    const rows = ['A', 'B', 'C', 'D', 'E','F']; // Add more rows as needed
-    const seatsPerRow = 15;
-
-    rows.forEach(row => {
-        for (let i = 1; i <= seatsPerRow; i++) {
-            const seatId = `${row}${i}`;
-            const status = getRandomStatus();
-            seats.push({ id: seatId, status: status });
-        }
-    });
-
-    return seats;
-}
-
-function getRandomStatus() {
-    const random = Math.random();
-    if (random < 0.7) {
-        return "available";
-    } else if (random < 0.9) {
-        return "reserved";
-    } else {
-        return "damaged";
-    }
-}
-
 let selectedSeats = [];
+let eventData = {};
+
+window.onload = function() {
+    // Get event ID from URL parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const eventId = urlParams.get('event');
+
+    if (!eventId) {
+        alert("Event ID not specified!");
+        window.location.href = '../index.php';
+        return;
+    }
+
+    // Fetch event and seat data from the server
+    fetch(`get_seats.php?event=${eventId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                window.location.href = '../index.php';
+                return;
+            }
+
+            // Set event data
+            eventData = {
+                ...data.event,
+                seats: data.seats
+            };
+
+            // Update page title with event name
+            document.querySelector('h1').textContent = `${eventData.title} - Sélection des Places`;
+
+            // Generate seat map
+            generateSeatMap();
+        })
+        .catch(error => {
+            console.error('Error fetching seats:', error);
+            alert("Failed to load seat data. Please try again later.");
+        });
+};
 
 function generateSeatMap() {
     const seatMap = document.getElementById('seatMap');
+    seatMap.innerHTML = '';
 
     eventData.seats.forEach(seat => {
         const seatElement = document.createElement('button');
@@ -50,6 +56,7 @@ function generateSeatMap() {
         seatMap.appendChild(seatElement);
     });
 }
+
 
 function toggleSeatSelection(seatId) {
     const index = selectedSeats.indexOf(seatId);
@@ -71,7 +78,7 @@ function updateSelectionDisplay() {
     document.getElementById('selectedCount').textContent = selectedSeats.length;
     document.getElementById('totalPrice').textContent = selectedSeats.length * eventData.price;
 
-    // Mise à jour visuelle
+   
     document.querySelectorAll('.seat').forEach(seat => {
         seat.classList.remove('selected');
         if (selectedSeats.includes(seat.textContent)) {
@@ -95,7 +102,7 @@ function showConfirmation() {
 }
 
 function confirmReservation() {
-    // Ici ajouter la logique de réservation avec PHP
+
     alert(`Réservation confirmée pour: ${selectedSeats.join(', ')}`);
     hideModal();
     selectedSeats = [];
@@ -106,5 +113,5 @@ function hideModal() {
     document.getElementById('confirmModal').style.display = 'none';
 }
 
-// Initialisation
+
 window.onload = generateSeatMap;

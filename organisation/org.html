@@ -9,7 +9,7 @@
 
 <body>
     <nav class="navbar">
-        <div class="logo" onclick="window.location.href='../index.html'">TicketThéâtre</div>
+        <div class="logo" onclick="window.location.href='../index.php'">TicketThéâtre</div>
         <div class="nav-links" style="margin-right: 5rem;">
             <a href="events.html">Mes Événements</a>
             <a href="logout.html">Déconnexion</a>
@@ -17,8 +17,9 @@
     </nav>
 
     <div class="event-creation-container">
-        <form class="form-section" id="eventForm" onsubmit="return createEvent(event)">
-            <h2>Créer un Nouvel Événement</h2>
+        <form class="form-section" id="eventForm" onsubmit="return submitEventForm(event)">
+
+        <h2>Créer un Nouvel Événement</h2>
 
             <div class="form-group">
                 <label>Nom de l'événement</label>

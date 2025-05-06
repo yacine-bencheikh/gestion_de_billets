@@ -9,9 +9,9 @@
     
 </head>
 <body>
-    <!-- Même navbar que la homepage -->
+
     <nav class="navbar">
-        <div class="logo" onclick="window.location.href='../index.html'">TicketThéâtre</div>
+        <div class="logo" onclick="window.location.href='../index.php'">TicketThéâtre</div>
         <div class="nav-links">
             <a href="login.html">Connexion</a>
             <a href="register.html">Inscription</a>
@@ -20,15 +20,37 @@
 
     <div class="auth-container">
         <h2 class="auth-title">Créez votre compte</h2>
-        <form id="registerForm" onsubmit="return validateRegister()">
+        <div class="message-container">
+            <?php
+    session_start();
+    if (isset($_SESSION['error'])) {
+        echo '<div class="error-message">' . $_SESSION['error'] . '</div>';
+        unset($_SESSION['error']);
+        }
+        if (isset($_SESSION['success'])) {
+        echo '<div class="success-message">' . $_SESSION['success'] . '</div>';
+        unset($_SESSION['success']);
+        }
+        ?>
+    </div>
+        <form id="registerForm" action="register_process.php" method="POST" onsubmit="return validateRegister()">
             <div class="form-group">
-                <input type="email" id="email" placeholder="Adresse email" required>
+                <input type="text" id="name" name="name" placeholder="Your name" required>
             </div>
             <div class="form-group">
-                <input type="password" id="password" placeholder="Mot de passe" required>
+                <input type="email" id="email" name="email" placeholder="Adresse email" required>
             </div>
             <div class="form-group">
-                <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                <input type="password" id="password" name="password" placeholder="Mot de passe" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le mot de passe" required>
+            </div>
+            <div class="form-group">
+                <select id="role" name="role">
+                    <option value="client">Client</option>
+                    <option value="organizer">Organizer</option>
+                </select>
             </div>
             <button type="submit">S'inscrire</button>
         </form>

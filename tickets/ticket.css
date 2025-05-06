@@ -134,11 +134,11 @@
 
 @media print {
     body * {
-        visibility: hidden; /* Hide everything */
+        visibility: hidden;
     }
 
     .ticket-body, .ticket-body * {
-        visibility: visible; /* Show only the ticket-body */
+        visibility: visible; 
     }
 
     .ticket {

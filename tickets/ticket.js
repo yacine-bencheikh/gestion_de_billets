@@ -1,28 +1,49 @@
-// Récupérer les données de la réservation (simulées ici)
-const reservationData = {
-    event: "Concert Symphonique",
-    date: "15 Mars 2024 - 20:00",
-    duration: "2 heures",
-    location: "Théâtre Municipal, Paris",
-    seats: ["A12", "A13", "A14"],
-    total: "135,00 €",
-    paymentMethod: "Mastercard (•••• 4242)",
-    paymentDate: "25/04/2024 à 14:30",
-    reference: "RES-2024-0425"
+window.onload = function() {
+    // Fetch ticket data
+    fetch('get_ticket.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                window.location.href = '../index.php';
+                return;
+            }
+
+            // Populate ticket with data
+            populateTicket(data);
+            generateQRCode(data.reference);
+        })
+        .catch(error => {
+            console.error('Error fetching ticket data:', error);
+        });
 };
 
-// Dans une implémentation réelle, vous récupéreriez ces données :
-// 1. Depuis les paramètres URL
-// 2. Depuis le localStorage
-// 3. Via une requête API au backend
+function populateTicket(data) {
+    document.querySelector('.ticket-header h2').textContent = data.event;
+    document.querySelector('.ticket-number').textContent = '#' + data.reference;
 
-// Fonction pour générer un vrai QR code (nécessiterait une librairie comme qrcode.js)
-function generateQRCode() {
-    // Implémentation réelle utiliserait une librairie QR code
-    // avec un identifiant unique de réservation
+    // Populate event details
+    const eventInfo = document.querySelectorAll('.ticket-info p');
+    eventInfo[0].innerHTML = `<strong>Date :</strong> ${formatDate(data.date)}`;
+    eventInfo[1].innerHTML = `<strong>Durée :</strong> ${data.duration}`;
+
+    // Populate seats
+    const seatsContainer = document.querySelector('.ticket-info div');
+    seatsContainer.innerHTML = '';
+    data.seats.forEach(seat => {
+        const seatBadge = document.createElement('span');
+        seatBadge.className = 'seat-badge';
+        seatBadge.textContent = seat;
+        seatsContainer.appendChild(seatBadge);
+    });
+
+    // Populate payment info
+    eventInfo[3].innerHTML = `<strong>Montant total :</strong> ${data.total}`;
+    eventInfo[4].innerHTML = `<strong>Méthode :</strong> ${data.paymentMethod}`;
+    eventInfo[5].innerHTML = `<strong>Date de paiement :</strong> ${data.paymentDate}`;
 }
 
-// Au chargement de la page
-window.onload = function() {
-    generateQRCode();
-};
+function generateQRCode(reference) {
+    const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${reference}`;
+    document.querySelector('#qrcode img').src = qrCodeUrl
+}

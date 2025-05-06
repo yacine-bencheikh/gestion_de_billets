@@ -1,4 +1,4 @@
-$v<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -8,7 +8,7 @@ $v<!DOCTYPE html>
     <script src="index.js"></script>
 </head>
 <body>
-    <!-- Navbar -->
+    
     <nav class="navbar">
         <div class="logo">TicketThéâtre</div>
         <div class="nav-links">
@@ -17,12 +17,12 @@ $v<!DOCTYPE html>
         </div>
     </nav>
 
-    <!-- Main Content -->
+    
     <div class="container">
         <h1>Événements à venir</h1>
         
         <div class="events-grid" id="eventsContainer">
-            <!-- Les événements seront ajoutés dynamiquement -->
+            
         </div>
     </div>
 
