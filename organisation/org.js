@@ -76,6 +76,12 @@ function submitEventForm(e) {
         formData.append(key, eventData[key]);
     }
 
+    // Append the image file to the form data if provided
+    const imageInput = document.getElementById('eventImage');
+    if (imageInput.files.length > 0) {
+        formData.append('eventImage', imageInput.files[0]);
+    }
+
     // Send data to server
     fetch('./create_event.php', {
         method: 'POST',
@@ -98,7 +104,6 @@ function submitEventForm(e) {
         .catch(error => {
             console.error('Error details:', error);
             alert('Une erreur est survenue lors de la création de l\'événement: ' + error.message);
-
         });
 
     return false;

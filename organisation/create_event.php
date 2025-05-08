@@ -23,6 +23,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $availableSeats = filter_input(INPUT_POST, 'availableSeats', FILTER_SANITIZE_NUMBER_INT);
     $description = htmlspecialchars($_POST['description'] ?? '', ENT_QUOTES, 'UTF-8');
     $organizerId = $_SESSION['id'];
+    $imageUrl = null;  // Default to null
+
+    // Handle image upload if an image was provided
+    if (isset($_FILES['eventImage']) && $_FILES['eventImage']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/events/';  // Create this directory if it doesn't exist
+
+        // Create the directory if it doesn't exist
+        if (!file_exists($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+
+        // Generate a unique filename
+        $fileExtension = pathinfo($_FILES['eventImage']['name'], PATHINFO_EXTENSION);
+        $fileName = uniqid('event_') . '.' . $fileExtension;
+        $targetFilePath = $uploadDir . $fileName;
+
+        // Validate the file
+        $validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array(strtolower($fileExtension), $validExtensions)) {
+            // Check file size (max 2MB)
+            if ($_FILES['eventImage']['size'] <= 2000000) {
+                // Move the file to the uploads directory
+                if (move_uploaded_file($_FILES['eventImage']['tmp_name'], $targetFilePath)) {
+                    $imageUrl = 'uploads/events/' . $fileName;  // Store relative path
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => false, 'message' => 'Failed to upload image']);
+                    exit;
+                }
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Image size exceeds 2MB limit']);
+                exit;
+            }
+        } else {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => false, 'message' => 'Invalid image format. Only JPG, JPEG, PNG and GIF are allowed']);
+            exit;
+        }
+    }
 
     // Get seats configuration from JSON data
     $seatsConfig = json_decode($_POST['seatsConfig'], true);
@@ -34,21 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     error_log("Seats config: " . json_encode($seatsConfig));
 
-
     // Insert event into database
     try {
         error_log("Event data: " . json_encode($_POST));
 
         $pdo->beginTransaction();
 
-        // Insert event record
-        $stmt = $pdo->prepare("INSERT INTO events (organizer_id, title, description, event_date, duration, price, total_seats, available_seats) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$organizerId, $title, $description, $date, $duration, $price, $totalSeats, $availableSeats]);
+        // Insert event record - added image_url column
+        $stmt = $pdo->prepare("INSERT INTO events (organizer_id, title, description, event_date, duration, price, total_seats, available_seats, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$organizerId, $title, $description, $date, $duration, $price, $totalSeats, $availableSeats, $imageUrl]);
 
         // Get the new event ID
         $eventId = $pdo->lastInsertId();
         error_log("New event ID: " . $eventId);
-
 
         // Insert seats
         $seatStmt = $pdo->prepare("INSERT INTO seats (event_id, seat_number, status) VALUES (?, ?, ?)");
@@ -61,7 +99,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 error_log("Seat insertion error for seat " . json_encode($seat) . ": " . $seatEx->getMessage());
                 throw $seatEx; // Re-throw to trigger the outer catch block
             }
-
         }
 
         $pdo->commit();

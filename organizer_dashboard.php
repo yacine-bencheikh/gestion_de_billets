@@ -21,7 +21,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'organizer') {
     <div class="nav-links">
         <a href="index.php">Accueil</a>
         <a href="organisation/org.html">Créer un Événement</a>
-        <a href="manage_events.php">Gérer les Événements</a>
+        <a href="organisation/manage_events.php">Gérer les Événements</a>
         <a href="sales_reports.php">Rapports de Vente</a>
         <a href="profile.php">Mon Profil</a>
         <a href="auth/logout.php">Déconnexion</a>
@@ -29,7 +29,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'organizer') {
 </nav>
 
 <div class="container">
-    <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</h1>
+    <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['name']); ?> !</h1>
     <p>Voici votre tableau de bord organisateur. Ici, vous pouvez créer et gérer des événements, consulter les ventes de billets, et plus encore.</p>
 
     <div class="dashboard-cards">

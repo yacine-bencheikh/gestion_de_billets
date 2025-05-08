@@ -28,7 +28,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'client') {
 </nav>
 
 <div class="container">
-    <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['user_name']); ?> !</h1>
+    <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['name']); ?> !</h1>
     <p>Voici votre tableau de bord client. Ici, vous pouvez consulter vos billets, les événements à venir, et plus encore.</p>
 
     <div class="dashboard-cards">

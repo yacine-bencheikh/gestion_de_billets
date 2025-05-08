@@ -28,6 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: login.html');
         exit;
     }
+    if($user['role'] === 'client'){
+        header('Location: ../client_dashboard.php');
+    }
 
     // Set session variables
     $_SESSION['id'] = $user['id'];
