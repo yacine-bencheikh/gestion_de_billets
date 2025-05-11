@@ -3,56 +3,162 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Sélection des Places</title>
+    <title>Sélection des Places - TicketThéâtre</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="reserfvation.css">
-    
+    <link rel="stylesheet" href="reservation.css"> <!-- Fixed typo in CSS filename -->
 </head>
 
 <body>
-    <nav class="navbar">
-        <div class="logo" onclick="window.location.href='../index.php'">TicketThéâtre</div>
-        <div class="nav-links" style="padding-right: 5rem;">
-            <a href="login.html">Mon Compte</a>
+<nav class="navbar">
+    <div class="logo" onclick="window.location.href='../index.php'">TicketThéâtre</div>
+    <div class="nav-links" style="padding-right: 5rem;">
+        <a href="../auth/login.html">Mon Compte</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h1>Sélection des Places</h1>
+
+    <div class="event-details" id="eventDetails">
+        <!-- Event details will be populated by JavaScript -->
+    </div>
+
+    <div class="status-legend">
+        <div class="legend-item">
+            <div class="seat available" style="width:20px;height:20px"></div>
+            <span>Disponible</span>
         </div>
-    </nav>
-
-    <div class="container">
-        <h1>Concert Symphonique - Sélection des Places</h1>
-        <div class="status-legend">
-            <div class="legend-item">
-                <div class="seat available" style="width:20px;height:20px"></div>
-                <span>Disponible</span>
-            </div>
-            <div class="legend-item">
-                <div class="seat reserved" style="width:20px;height:20px"></div>
-                <span>Réservé</span>
-            </div>
-            <div class="legend-item">
-                <div class="seat damaged" style="width:20px;height:20px"></div>
-                <span>Endommagé</span>
-            </div>
+        <div class="legend-item">
+            <div class="seat reserved" style="width:20px;height:20px"></div>
+            <span>Réservé</span>
         </div>
-
-        <div class="seat-map" id="seatMap"></div>
-
-        <div class="summary">
-            <h3>Votre Sélection</h3>   
-            <p>Places sélectionnées: <span id="selectedCount">0</span></p>
-            <p>Total: <span id="totalPrice">0</span>€</p>
-            <button onclick="showConfirmation(); window.location.href='../payment/payment.html'">Réserver</button>
+        <div class="legend-item">
+            <div class="seat damaged" style="width:20px;height:20px"></div>
+            <span>Endommagé</span>
         </div>
-
-        <div id="confirmModal">
-            <h2>Confirmer la réservation</h2>
-            <p id="modalDetails"></p>
-            <button onclick="confirmReservation()">Confirmer</button>
-            <button onclick="hideModal()">Annuler</button>
+        <div class="legend-item">
+            <div class="seat selected" style="width:20px;height:20px"></div>
+            <span>Sélectionné</span>
         </div>
     </div>
 
-    <script src="reservation.js"></script>
+    <div class="seat-map" id="seatMap">
+        <!-- Seats will be populated by JavaScript -->
+    </div>
+
+    <div class="summary">
+        <h3>Votre Sélection</h3>
+        <p>Places sélectionnées: <span id="selectedCount">0</span></p>
+        <p>Prix unitaire: <span id="unitPrice">0</span>€</p>
+        <p>Total: <span id="totalPrice">0</span>€</p>
+        <button id="reserveButton" onclick="showConfirmation()">Réserver</button> <!-- Added onclick handler -->
+    </div>
+
+    <div id="confirmModal" style="display: none;"> <!-- Added initial hidden state -->
+        <h2>Confirmer la réservation</h2>
+        <p id="modalDetails"></p>
+        <button onclick="confirmReservation()">Confirmer</button>
+        <button onclick="hideModal()">Annuler</button>
+    </div>
+</div>
+
+<script src="reservation.js">
+
+</script>
+<script>
+
+    // Add missing functions if not defined in reservation.js
+    if (typeof hideModal !== 'function') {
+        function hideModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+    }
+
+    // Make sure the unitPrice element is updated when event data is loaded
+    window.addEventListener('load', function() {
+        const originalGenerateSeatMap = window.generateSeatMap;
+        window.generateSeatMap = function() {
+            originalGenerateSeatMap();
+            // Update unit price display
+            document.getElementById('unitPrice').textContent = eventData.price || 0;
+
+            // Also populate the event details section
+            const eventDetails = document.getElementById('eventDetails');
+            eventDetails.innerHTML = `
+                <h2>${eventData.title || ''}</h2>
+                <p><strong>Date:</strong> ${eventData.date || ''}</p>
+                <p><strong>Lieu:</strong> ${eventData.venue || ''}</p>
+                <p><strong>Prix:</strong> ${eventData.price || 0}€</p>
+            `;
+        };
+    });
+</script>
+<script>
+    const confirmReservation = () => {
+        // Get event ID from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const eventId = urlParams.get('event');
+
+        if (!eventId || !selectedSeats.length) {
+            alert('Information de réservation invalide');
+            return;
+        }
+
+        // Create request body
+        const requestData = {
+            event_id: eventId,
+            selected_seats: selectedSeats
+        };
+
+        // Add console log to debug
+        console.log('Sending reservation request:', requestData);
+
+        // Send reservation to server - using the full path to be sure
+        fetch('./update_seats.php', {  // Note: added './' to ensure it looks in current directory
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`Server responded with status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    // Redirect to payment page with reservation ID
+                    window.location.href = `../payment/payment.php?reservation=${data.reservation_id}`;
+                } else {
+                    alert(`Erreur: ${data.message}`);
+                    hideModal();
+                    // Refresh to get updated seat status
+                    location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de la réservation. Veuillez réessayer.');
+                hideModal();
+            });
+    }
+    const showConfirmation =  ()=> {
+        if (selectedSeats.length === 0) {
+            alert("Veuillez sélectionner au moins une place !");
+            return;
+        }
+
+        const modal = document.getElementById('confirmModal');
+        modal.style.display = 'block';
+        document.getElementById('modalDetails').innerHTML = `
+        Places: ${selectedSeats.join(', ')}<br>
+        Total: ${selectedSeats.length * eventData.price}€
+    `;
+    }
+</script>
 </body>
-
-
 </html>

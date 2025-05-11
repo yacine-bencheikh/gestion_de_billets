@@ -63,7 +63,7 @@ $events = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <a href="manage_events.php" class="active">Gérer les Événements</a>
         <a href="sales_reports.php">Rapports de Vente</a>
         <a href="profile.php">Mon Profil</a>
-        <a href="auth/logout.php">Déconnexion</a>
+        <a href="../auth/logout.php">Déconnexion</a>
     </div>
 </nav>
 

@@ -26,7 +26,7 @@ if (!isset($_SESSION['id']) || $_SESSION['role'] !== 'organizer') {
         <a href="profile.php">Mon Profil</a>
         <a href="auth/logout.php">Déconnexion</a>
     </div>
-</nav>
+</nav>²
 
 <div class="container">
     <h1>Bienvenue, <?php echo htmlspecialchars($_SESSION['name']); ?> !</h1>

@@ -15,7 +15,7 @@ try {
     // Get event details
     $eventStmt = $pdo->prepare("SELECT * FROM events WHERE id = ?");
     $eventStmt->execute([$eventId]);
-    $event = $eventStmt->fetch(PDO::FETCH_ASSOC);
+    $event = $eventStmt->fetch();
 
     if (!$event) {
         header('Content-Type: application/json');
@@ -26,7 +26,7 @@ try {
     // Check if you have a seats table
     $hasSeatsTable = false;
     try {
-        $checkTable = $pdo->query("SELECT * FROM seats where event_id = $eventId");
+        $checkTable = $pdo->query("SELECT 1 FROM seats LIMIT 1");
         $hasSeatsTable = true;
     } catch (PDOException $e) {
         // Table doesn't exist
@@ -37,13 +37,13 @@ try {
         // If you have a seats table, get seats for the event
         $seatsStmt = $pdo->prepare("SELECT * FROM seats WHERE event_id = ?");
         $seatsStmt->execute([$eventId]);
-        $seats = $seatsStmt->fetchAll(PDO::FETCH_ASSOC);
+        $seats = $seatsStmt->fetchAll();
 
-        // Format seats for the front-end based on your actual database structure
+        // Format seats for the front-end
         $formattedSeats = [];
         foreach ($seats as $seat) {
             $formattedSeats[] = [
-                'id' => $seat['seat_number'], // Use seat_number directly as id
+                'id' => $seat['row'] . $seat['seat_number'],
                 'status' => $seat['status']
             ];
         }

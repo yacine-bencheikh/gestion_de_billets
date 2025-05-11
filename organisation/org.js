@@ -96,7 +96,7 @@ function submitEventForm(e) {
         .then(data => {
             if (data.success) {
                 alert('Événement créé avec succès !');
-                window.location.href = 'organizer_dashboard.php';
+                window.location.href = '../organizer_dashboard.php';
             } else {
                 alert('Erreur: ' + data.message);
             }

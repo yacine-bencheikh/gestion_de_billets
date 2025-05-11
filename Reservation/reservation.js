@@ -1,5 +1,5 @@
+
 let selectedSeats = [];
-let eventData = {};
 
 window.onload = function() {
     // Get event ID from URL parameter
@@ -14,8 +14,13 @@ window.onload = function() {
 
     // Fetch event and seat data from the server
     fetch(`get_seats.php?event=${eventId}`)
-        .then(response => response.json())
+        .then(response => {
+            console.log("Response status:", response.status);
+            return response.json();
+        })
         .then(data => {
+            console.log("Data received:", data);
+
             if (data.error) {
                 alert(data.error);
                 window.location.href = '../index.php';
@@ -28,6 +33,9 @@ window.onload = function() {
                 seats: data.seats
             };
 
+            console.log("Event data processed:", eventData);
+            console.log("Seats available:", eventData.seats);
+
             // Update page title with event name
             document.querySelector('h1').textContent = `${eventData.title} - Sélection des Places`;
 
@@ -38,43 +46,68 @@ window.onload = function() {
             console.error('Error fetching seats:', error);
             alert("Failed to load seat data. Please try again later.");
         });
-};
 
-function generateSeatMap() {
-    const seatMap = document.getElementById('seatMap');
-    seatMap.innerHTML = '';
+// Also add logging in generateSeatMap function
+    function generateSeatMap() {
+        const seatMap = document.getElementById('seatMap');
+        seatMap.innerHTML = '';
 
-    eventData.seats.forEach(seat => {
-        const seatElement = document.createElement('button');
-        seatElement.className = `seat ${seat.status}`;
-        seatElement.textContent = seat.id;
+        console.log("Generating seat map with seats:", eventData.seats);
 
-        if (seat.status === 'available') {
-            seatElement.onclick = () => toggleSeatSelection(seat.id);
-        }
-
-        seatMap.appendChild(seatElement);
-    });
-}
-
-
-function toggleSeatSelection(seatId) {
-    const index = selectedSeats.indexOf(seatId);
-
-    if (index === -1) {
-        if (selectedSeats.length >= eventData.availableSeats) {
-            alert("Vous ne pouvez pas sélectionner plus de places disponibles !");
+        if (!eventData.seats || eventData.seats.length === 0) {
+            console.error("No seats available in the data");
+            seatMap.innerHTML = '<p>Aucune place disponible pour cet événement.</p>';
             return;
         }
-        selectedSeats.push(seatId);
-    } else {
-        selectedSeats.splice(index, 1);
+
+        eventData.seats.forEach(seat => {
+            console.log("Processing seat:", seat);
+            const seatElement = document.createElement('button');
+            seatElement.className = `seat ${seat.status}`;
+            seatElement.textContent = seat.id;
+
+            if (seat.status === 'available') {
+                seatElement.onclick = () => toggleSeatSelection(seat.id);
+            }
+
+            seatMap.appendChild(seatElement);
+        });
+    }
+    document.getElementById('reserveButton').addEventListener('click', function() {
+        if (selectedSeats.length === 0) {
+            alert("Veuillez sélectionner au moins une place !");
+            return;
+        }
+
+        const modal = document.getElementById('confirmModal');
+        modal.style.display = 'block';
+        document.getElementById('modalDetails').innerHTML = `
+        Places: ${selectedSeats.join(', ')}<br>
+        Total: ${selectedSeats.length * eventData.price}€
+    `;
+    });
+
+
+
+
+    function toggleSeatSelection(seatId) {
+        const index = selectedSeats.indexOf(seatId);
+
+        if (index === -1) {
+            if (selectedSeats.length >= eventData.availableSeats) {
+                alert("Vous ne pouvez pas sélectionner plus de places disponibles !");
+                return;
+            }
+            selectedSeats.push(seatId);
+        } else {
+            selectedSeats.splice(index, 1);
+        }
+
+        updateSelectionDisplay();
     }
 
-    updateSelectionDisplay();
-}
 
-function updateSelectionDisplay() {
+    function updateSelectionDisplay() {
     document.getElementById('selectedCount').textContent = selectedSeats.length;
     document.getElementById('totalPrice').textContent = selectedSeats.length * eventData.price;
 
@@ -87,31 +120,13 @@ function updateSelectionDisplay() {
     });
 }
 
-function showConfirmation() {
-    if (selectedSeats.length === 0) {
-        alert("Veuillez sélectionner au moins une place !");
-        return;
+
+
+
+
+
+
+    function hideModal() {
+        document.getElementById('confirmModal').style.display = 'none';
     }
-
-    const modal = document.getElementById('confirmModal');
-    modal.style.display = 'block';
-    document.getElementById('modalDetails').innerHTML = `
-        Places: ${selectedSeats.join(', ')}<br>
-        Total: ${selectedSeats.length * eventData.price}€
-    `;
-}
-
-function confirmReservation() {
-
-    alert(`Réservation confirmée pour: ${selectedSeats.join(', ')}`);
-    hideModal();
-    selectedSeats = [];
-    updateSelectionDisplay();
-}
-
-function hideModal() {
-    document.getElementById('confirmModal').style.display = 'none';
-}
-
-
-window.onload = generateSeatMap;
+};

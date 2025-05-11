@@ -1,3 +1,23 @@
+<?php
+session_start();
+
+// Check if user is logged in using the correct session variable
+if (!isset($_SESSION['id'])) {
+    // Use the correct path to your login page
+    header('Location: ../auth/login.html');
+    exit;
+}
+
+// Get the reservation ID from the URL
+$reservationId = isset($_GET['reservation']) ? $_GET['reservation'] : null;
+
+// If no reservation ID is provided, redirect back
+if (!$reservationId) {
+    header('Location: ../reservation/reservation.html');
+    exit;
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -5,21 +25,24 @@
     <meta charset="UTF-8">
     <title>Paiement Sécurisé</title>
     <link rel="stylesheet" href="payment.css">
-    
+
 </head>
 
 <body>
     <nav class="navbar">
         <div class="logo" onclick="window.location.href='../index.php'">TicketThéâtre</div>
         <div class="nav-links">
-            <a href="homePage.html">Accueil</a>
-            <a href="login.html">Mon Compte</a>
+            <a href="../index.php">Accueil</a>
+            <a href="../auth/login.html">Mon Compte</a>
         </div>
     </nav>
 
     <div class="payment-container">
         <form class="payment-form" id="paymentForm" onsubmit="return processPayment(event)">
             <h2>Paiement Sécurisé</h2>
+            <input type="hidden" id="reservationId" name="reservationId" value="<?php echo htmlspecialchars($reservationId); ?>">
+
+
 
             <div class="card-icons">
                 <img src="https://img.icons8.com/color/48/000000/visa.png" alt="Visa">
@@ -92,21 +115,9 @@
         </form>
 
         <div class="order-summary">
-            <h3>Votre commande</h3>     
-            <div class="summary-item">
-                <p><strong>Événement:</strong></p>
-                <p>Concert Symphonique</p>
-                <p>Date: 15 Mars 2024 - 20:00</p>
-            </div>
-
-            <div class="summary-item">
-                <p><strong>Places sélectionnées:</strong></p>
-                <p>A12, A13, A14</p>
-            </div>
-
-            <div class="summary-item">
-                <p><strong>Total:</strong></p>
-                <p style="font-size: 1.5rem; color: #27ae60;">135€</p>
+            <h3>Votre commande</h3>
+            <div id="orderDetails">
+                <!-- Order details will be populated by JavaScript -->
             </div>
         </div>
     </div>
